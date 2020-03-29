@@ -1,6 +1,6 @@
 {
     "name": "pointybeard/symphony-extended",
-    "description": "A collection of extended SymphonyCMS base classes that can be extended to add extra features and helpers",
+    "description": "A collection of extended SymphonyCMS base classes that can be extended to add extra features and helpers.",
     "homepage": "https://github.com/pointybeard/symphony-extended",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -23,6 +23,6 @@
     "autoload": {
         "psr-4": {
             "pointybeard\\Symphony\\": "src/"
-        },
+        }
     }
 }
