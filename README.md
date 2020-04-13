@@ -1,11 +1,11 @@
 # Symphony CMS: Extended Base Class Library
 
--   Version: v1.0.0
--   Date: March 28 2020
+-   Version: 1.0.1
+-   Date: April 13 2020
 -   [Release notes](https://github.com/pointybeard/symphony-extended/blob/master/CHANGELOG.md)
 -   [GitHub repository](https://github.com/pointybeard/symphony-extended)
 
-A collection of extended SymphonyCMS base classes that can be extended to add extra features and helpers.
+A collection of extended [Symphony CMS](https://www.getsymphony.com/) base classes that can be extended to add extra features and helpers.
 
 ## Installation
 
@@ -28,7 +28,9 @@ To include all the [PHP Helpers](https://github.com/pointybeard/helpers) package
 
 ### AbstractExtension
 
-Extend you `extension.driver.php` class with `pointybeard\Symphony\Extended\AbstractExtension` instead of `\Extension`. Provides the following extra class method:
+Extend your `extension.driver.php` class with `pointybeard\Symphony\Extended\AbstractExtension` instead of `\Extension`.
+
+Provides the following extra class method:
 
 `status`, `handle`, `about`, and `install`
 
@@ -75,6 +77,14 @@ In addition, this extended class expects to find a file `extension.json` in the 
 ```
 
 Dependencies are checked prior to commencing installation. If your extension has a custom `install()` method, be sure to include a call to `parent::install();`.
+
+### AbstractSectionDatasource
+
+Extend your custom Data Sources with `pointybeard\Symphony\Extended\AbstractSectionDatasource` instead of `\SectionDatasource`.
+
+This extended class gives you the ability to define your `$dsParamFILTERS` array with field element names instead of ID values making your data source more portable (i.e. if the field ID changes, your data source doesn't need to be updated).
+
+**Note: By extending AbstractSectionDatasource, your data source can no longer be edited via the Symphony Data Source editor.**
 
 ## Support
 

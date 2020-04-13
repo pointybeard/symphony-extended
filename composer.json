@@ -1,6 +1,6 @@
 {
     "name": "pointybeard/symphony-extended",
-    "description": "A collection of extended SymphonyCMS base classes that can be extended to add extra features and helpers.",
+    "description": "A collection of extended Symphony CMS base classes that can be extended to add extra features and helpers.",
     "homepage": "https://github.com/pointybeard/symphony-extended",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -13,12 +13,11 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/pointybeard/symphony-extended/issues",
-        "wiki": "https://github.com/pointybeard/symphony-extended/wiki"
+        "issues": "https://github.com/pointybeard/symphony-extended/issues"
     },
     "require": {
         "php": ">=7.3",
-        "pointybeard/helpers-functions-json": "^1.0"
+        "pointybeard/helpers-functions-json": "~1.0.0"
     },
     "autoload": {
         "psr-4": {
