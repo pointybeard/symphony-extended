@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace pointybeard\Symphony\Extended;
 
+use Extension;
+use ExtensionManager;
 use pointybeard\Helpers\Functions\Json;
 
-abstract class AbstractExtension extends \Extension implements Interfaces\ExtensionInterface
+abstract class AbstractExtension extends Extension implements Interfaces\ExtensionInterface
 {
     private $about = null;
 
@@ -17,17 +19,20 @@ abstract class AbstractExtension extends \Extension implements Interfaces\Extens
 
     public function install()
     {
-        foreach ($this->about()->require as $handle) {
-            if (false == $this->checkDependency($handle)) {
-                throw new \Exception("Extenson '{$handle}' is not installed but is required to install extension '{$this->about()->name}'.");
+        if (true == isset($this->about()->require) && !false == empty($this->about()->require)) {
+            foreach ($this->about()->require as $handle) {
+                if (false == $this->checkDependency($handle)) {
+                    throw new \Exception("Extenson '{$handle}' is not installed but is required to install extension '{$this->about()->name}'.");
+                }
             }
         }
 
         return true;
     }
 
-    final public static function status(): string {
-        \ExtensionManager::about(static::handle())["status"];
+    final public static function status(): string
+    {
+        ExtensionManager::about(static::handle())['status'];
     }
 
     final public static function handle(): string
@@ -38,9 +43,9 @@ abstract class AbstractExtension extends \Extension implements Interfaces\Extens
     final public static function about(): \stdClass
     {
         try {
-            return Json\json_decode_file(self::dir()."/extension.json");
+            return Json\json_decode_file(self::dir().'/extension.json');
         } catch (\JsonException $ex) {
-            throw new \Exception("Unable to call the about method on extension ".static::handle().". Returned: ".$ex->getMessage());
+            throw new \Exception('Unable to call the about method on extension '.static::handle().'. Returned: '.$ex->getMessage());
         }
     }
 
@@ -51,8 +56,8 @@ abstract class AbstractExtension extends \Extension implements Interfaces\Extens
 
     private function checkDependency(string $handle): bool
     {
-        $about = \ExtensionManager::about($handle);
-        if (true == empty($about) || false == in_array(\Extension::EXTENSION_ENABLED, $about["status"])) {
+        $about = ExtensionManager::about($handle);
+        if (true == empty($about) || false == in_array(Extension::EXTENSION_ENABLED, $about['status'])) {
             return false;
         }
 
