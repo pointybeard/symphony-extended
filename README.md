@@ -1,9 +1,4 @@
-# Symphony CMS: Extended Base Class Library
-
--   Version: 1.0.1
--   Date: April 13 2020
--   [Release notes](https://github.com/pointybeard/symphony-extended/blob/master/CHANGELOG.md)
--   [GitHub repository](https://github.com/pointybeard/symphony-extended)
+# Extended Base Class Library for Symphony CMS
 
 A collection of extended [Symphony CMS](https://www.getsymphony.com/) base classes that can be extended to add extra features and helpers.
 
@@ -97,4 +92,4 @@ We encourage you to contribute to this project. Please check out the [Contributi
 
 ## License
 
-"Symphony CMS: Extended Base Class Library" is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+"Extended Base Class Library for Symphony CMS" is released under the [MIT License](http://www.opensource.org/licenses/MIT).
