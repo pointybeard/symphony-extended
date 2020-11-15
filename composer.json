@@ -15,17 +15,11 @@
     "support": {
         "issues": "https://github.com/pointybeard/symphony-extended/issues"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/pointybeard/symphony-extension-asset-management.git"
-        }
-    ],
     "require": {
         "php": ">=7.3",
         "pointybeard/helpers": "^1.2.0",
         "pointybeard/symphony-section-builder": "~0.2.0",
-        "pointybeard/symphony-extension-asset-management": "dev-master"
+        "pointybeard/symphony-extension-asset-management": "^0.1.0"
     },
     "require-dev": {
         "damianopetrungaro/php-commitizen": "^0.1.0",
