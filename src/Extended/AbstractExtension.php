@@ -105,11 +105,11 @@ abstract class AbstractExtension extends Extension implements Interfaces\Extensi
     protected function getAssetIterators(): \AppendIterator
     {
         $it = new \AppendIterator();
-        $it->append(new Iterators\DatasourceAssetsIterator());
-        $it->append(new Iterators\EventsAssetsIterator());
-        $it->append(new Iterators\FieldsAssetsIterator());
-        $it->append(new Iterators\ContentAssetsIterator());
-        $it->append(new Iterators\CommandsAssetsIterator());
+        $it->append(new Iterators\DatasourceIterator());
+        $it->append(new Iterators\EventIterator());
+        $it->append(new Iterators\FieldIterator());
+        $it->append(new Iterators\ContentIterator());
+        $it->append(new Iterators\CommandIterator());
 
         return $it;
     }
