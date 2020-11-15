@@ -29,14 +29,14 @@ abstract class AbstractExtension extends Extension implements Interfaces\Extensi
 
     public function enable()
     {
-        $this->enableAllAssets();
+        static::enableAllAssets();
 
         return true;
     }
 
     public function disable()
     {
-        $this->disableAllAssets();
+        static::disableAllAssets();
 
         return true;
     }
@@ -47,7 +47,7 @@ abstract class AbstractExtension extends Extension implements Interfaces\Extensi
 
         // @todo: Remove any sections created during install
 
-        $this->uninstallAllAssets();
+        static::uninstallAllAssets();
 
         return true;
     }
@@ -69,35 +69,35 @@ abstract class AbstractExtension extends Extension implements Interfaces\Extensi
             );
         }
 
-        $this->installAllAssets();
+        static::installAllAssets();
 
         return true;
     }
 
     protected function enableAllAssets()
     {
-        foreach ($this->getAssetIterators() as $item) {
+        foreach (static::getAssetIterators() as $item) {
             $item->enable();
         }
     }
 
     protected function disableAllAssets()
     {
-        foreach ($this->getAssetIterators() as $item) {
+        foreach (static::getAssetIterators() as $item) {
             $item->disable();
         }
     }
 
     protected function installAllAssets()
     {
-        foreach ($this->getAssetIterators() as $item) {
+        foreach (static::getAssetIterators() as $item) {
             $item->install();
         }
     }
 
     protected function uninstallAllAssets()
     {
-        foreach ($this->getAssetIterators() as $item) {
+        foreach (static::getAssetIterators() as $item) {
             $item->uninstall();
         }
     }
@@ -105,11 +105,26 @@ abstract class AbstractExtension extends Extension implements Interfaces\Extensi
     protected function getAssetIterators(): \AppendIterator
     {
         $it = new \AppendIterator();
-        $it->append(new Iterators\DatasourceIterator());
-        $it->append(new Iterators\EventIterator());
-        $it->append(new Iterators\FieldIterator());
-        $it->append(new Iterators\ContentIterator());
-        $it->append(new Iterators\CommandIterator());
+
+        if (true == is_dir(self::dir().'/src/Includes/Datasources')) {
+            $it->append(new Iterators\DatasourceIterator(self::dir().'/src/Includes/Datasources'));
+        }
+
+        if (true == is_dir(self::dir().'/src/Includes/Events')) {
+            $it->append(new Iterators\EventIterator(self::dir().'/src/Includes/Events'));
+        }
+
+        if (true == is_dir(self::dir().'/src/Includes/Fields')) {
+            $it->append(new Iterators\FieldIterator(self::dir().'/src/Includes/Fields'));
+        }
+
+        if (true == is_dir(self::dir().'/src/Includes/Content')) {
+            $it->append(new Iterators\ContentIterator(self::dir().'/src/Includes/Content'));
+        }
+
+        if (true == is_dir(self::dir().'/src/Includes/Commands')) {
+            $it->append(new Iterators\CommandIterator(self::dir().'/src/Includes/Commands'));
+        }
 
         return $it;
     }
