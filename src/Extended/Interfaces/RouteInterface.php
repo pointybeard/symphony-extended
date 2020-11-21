@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace pointybeard\Symphony\Extended;
+namespace pointybeard\Symphony\Extended\Interfaces;
 
 use Symfony\Component\HttpFoundation;
 
