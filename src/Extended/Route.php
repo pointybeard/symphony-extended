@@ -174,7 +174,7 @@ class Route implements Interfaces\RouteInterface
     {
         return [
             'url' => $this->url(),
-            'methods' => $this->methodFlagsToString(),
+            'methods' => $this->methodFlagsAsStrings(),
             'controller' => $this->controller(),
             'validate' => $this->validate(),
         ];
