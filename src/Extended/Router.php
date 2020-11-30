@@ -62,7 +62,7 @@ class Router implements Interfaces\RouterInterface
             $page = (object) $page;
 
             // Ignore anything that isn't a JSON page
-            if (false == is_array($page->type) || false == in_array(JsonFrontendPage::PAGE_TYPE_JSON, $page->type)) {
+            if (false == is_array($page->type) || false == in_array("JSON", $page->type)) {
                 continue;
             }
 
