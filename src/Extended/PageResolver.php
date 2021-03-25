@@ -90,14 +90,18 @@ class PageResolver
 
     private function getPageByHandleAndPath(string $handle, ?string $path = null): ?array
     {
+
+        // Normalise the path input to either a non-zero length string or null
+        $path = 0 == strlen(trim((string)$path)) ? null : $path;
+
         $query = SymphonyPDO\Loader::instance()->prepare(sprintf(
             'SELECT * FROM `tbl_pages` WHERE `path` %s AND `handle` = :handle LIMIT 1',
-            null !== $path ? '= :path' : 'IS NULL'
+            null != $path ? '= :path' : 'IS NULL'
         ));
 
         $query->bindParam(':handle', $handle, \PDO::PARAM_STR);
 
-        if (null !== $path) {
+        if (null != $path) {
             $query->bindParam(':path', $path, \PDO::PARAM_STR);
         }
 
