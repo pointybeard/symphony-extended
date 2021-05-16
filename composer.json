@@ -18,9 +18,10 @@
     "require": {
         "php": ">=7.3",
         "pointybeard/helpers": "^1.2.0",
-        "pointybeard/symphony-section-builder": "~0.2.0",
         "pointybeard/symphony-extension-asset-management": "^0.1.0",
         "pointybeard/symphony-pdo": "^0.1.0",
+        "pointybeard/symphony-section-builder": "~0.2.0",
+        "psr/container": "^2.0",
         "symfony/http-foundation": "^4.0"
     },
     "require-dev": {
