@@ -16,6 +16,8 @@ namespace pointybeard\Symphony\Extended;
 use pointybeard\Helpers\Functions\Flags;
 use Symfony\Component\HttpFoundation;
 
+use Closure;
+
 class Route implements Interfaces\RouteInterface
 {
     protected const DEFAULT_VALIDATOR = '[^/]+';
@@ -24,6 +26,7 @@ class Route implements Interfaces\RouteInterface
     protected $controller = null;
     protected $methods = null;
     protected $validate = [];
+    protected $middleware = null;
 
     protected $page = null;
 
@@ -170,6 +173,83 @@ class Route implements Interfaces\RouteInterface
         return $this->page;
     }
 
+    public function hasMiddleware(): bool
+    {
+        return false == empty($this->middleware());
+    }
+
+    protected function normaliseMiddleware($middleware) {
+
+        // Array
+        if(true == is_array($middleware)) {
+            $result = [];
+            foreach($middleware as $m) {
+                $result = array_merge($result, $this->normaliseMiddleware($m));
+            }
+            return $result;
+        }
+
+        // Class or Closure
+        if(
+            $middleware instanceof Closure ||
+            (
+                true == is_string($middleware) &&
+                true == class_exists($middleware) &&
+                true == method_exists($middleware, "handle")
+            )
+        ) {
+            return [$middleware];
+        }
+
+        // None of the above
+        throw new Exceptions\MiddlewareInvalidException($middleware);
+
+    }
+
+    public function runMiddleware(HttpFoundation\Request $request, HttpFoundation\Response $response)
+    {
+        // Guard
+        if (false == $this->hasMiddleware()) {
+            return $response;
+        }
+
+        $next = function(HttpFoundation\Request $request, HttpFoundation\Response $response) use (&$next, &$middleware) {
+
+            // Guard
+            if(true == empty($middleware)) {
+                return $response;
+            }
+
+            // Move along the middleware queue
+            $current = array_shift($middleware);
+
+            if(true == $current instanceof Closure) {
+                return $current($request, $response, $next);
+            }
+
+            $def = (new \ReflectionClass($current));
+            $handleMethod = $def->getMethod("handle");
+
+            $params = [];
+            if($handleMethod->getNumberOfParameters() > 3) {
+                foreach(array_slice($handleMethod->getParameters(), 3) as $p){
+                    // @todo
+                    // Need a mechanism for middleware to register things which can then
+                    // be passed into subsequent middleware that ask for it
+                    $params[] = null;
+                }
+            }
+
+            // Create instance of the middleware class and give it those extra params if there are any
+            $def->newInstanceArgs()->handle(...array_merge([$request, $response, $next], $params));
+
+        };
+
+        $middleware = $this->normaliseMiddleware($this->middleware());
+
+        return $next($request, $response);
+    }
+
     public function toArray(): array
     {
         return [
@@ -177,6 +257,7 @@ class Route implements Interfaces\RouteInterface
             'methods' => $this->methodFlagsAsStrings(),
             'controller' => $this->controller(),
             'validate' => $this->validate(),
+            'middleware' => $this->middleware(),
         ];
     }
 
