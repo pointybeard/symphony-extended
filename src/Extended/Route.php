@@ -178,25 +178,26 @@ class Route implements Interfaces\RouteInterface
         return false == empty($this->middleware());
     }
 
-    protected function normaliseMiddleware($middleware) {
+    protected static function normaliseMiddleware($middleware) {
 
         // Array
         if(true == is_array($middleware)) {
             $result = [];
             foreach($middleware as $m) {
-                $result = array_merge($result, $this->normaliseMiddleware($m));
+                $result = array_merge($result, self::normaliseMiddleware($m));
             }
             return $result;
         }
 
-        // Class or Closure
+        // Closure|String
         if(
             $middleware instanceof Closure ||
             (
                 true == is_string($middleware) &&
                 true == class_exists($middleware) &&
                 true == method_exists($middleware, "handle")
-            )
+            ) ||
+            ServiceContainer::getInstance()->has($middleware)
         ) {
             return [$middleware];
         }
@@ -213,41 +214,10 @@ class Route implements Interfaces\RouteInterface
             return $response;
         }
 
-        $next = function(HttpFoundation\Request $request, HttpFoundation\Response $response) use (&$next, &$middleware) {
+        foreach(self::normaliseMiddleware($this->middleware()) as $middleware) {
+            ServiceContainer::getInstance()->get($middleware);
+        }
 
-            // Guard
-            if(true == empty($middleware)) {
-                return $response;
-            }
-
-            // Move along the middleware queue
-            $current = array_shift($middleware);
-
-            if(true == $current instanceof Closure) {
-                return $current($request, $response, $next);
-            }
-
-            $def = (new \ReflectionClass($current));
-            $handleMethod = $def->getMethod("handle");
-
-            $params = [];
-            if($handleMethod->getNumberOfParameters() > 3) {
-                foreach(array_slice($handleMethod->getParameters(), 3) as $p){
-                    // @todo
-                    // Need a mechanism for middleware to register things which can then
-                    // be passed into subsequent middleware that ask for it
-                    $params[] = null;
-                }
-            }
-
-            // Create instance of the middleware class and give it those extra params if there are any
-            $def->newInstanceArgs()->handle(...array_merge([$request, $response, $next], $params));
-
-        };
-
-        $middleware = $this->normaliseMiddleware($this->middleware());
-
-        return $next($request, $response);
     }
 
     public function toArray(): array
