@@ -180,7 +180,7 @@ class Route implements Interfaces\RouteInterface
 
     protected static function normaliseMiddleware($middleware) {
 
-        // Array
+        // Array of middleware
         if(true == is_array($middleware)) {
             $result = [];
             foreach($middleware as $m) {
@@ -189,21 +189,7 @@ class Route implements Interfaces\RouteInterface
             return $result;
         }
 
-        // Closure|String
-        if(
-            $middleware instanceof Closure ||
-            (
-                true == is_string($middleware) &&
-                true == class_exists($middleware) &&
-                true == method_exists($middleware, "handle")
-            ) ||
-            ServiceContainer::getInstance()->has($middleware)
-        ) {
-            return [$middleware];
-        }
-
-        // None of the above
-        throw new Exceptions\MiddlewareInvalidException($middleware);
+        return [$middleware];
 
     }
 
