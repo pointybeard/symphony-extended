@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the "Extended Base Class Library for Symphony CMS" repository.
  *
- * Copyright 2020 Alannah Kearney <hi@alannahkearney.com>
+ * Copyright 2020-2021 Alannah Kearney <hi@alannahkearney.com>
  *
  * For the full copyright and license information, please view the LICENCE
  * file that was distributed with this source code.
@@ -92,7 +92,7 @@ class PageResolver
     {
 
         // Normalise the path input to either a non-zero length string or null
-        $path = 0 == strlen(trim((string)$path)) ? null : $path;
+        $path = 0 == strlen(trim((string) $path)) ? null : $path;
 
         $query = SymphonyPDO\Loader::instance()->prepare(sprintf(
             'SELECT * FROM `tbl_pages` WHERE `path` %s AND `handle` = :handle LIMIT 1',

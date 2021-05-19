@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the "Extended Base Class Library for Symphony CMS" repository.
  *
- * Copyright 2020 Alannah Kearney <hi@alannahkearney.com>
+ * Copyright 2020-2021 Alannah Kearney <hi@alannahkearney.com>
  *
  * For the full copyright and license information, please view the LICENCE
  * file that was distributed with this source code.
@@ -62,7 +62,7 @@ class Router implements Interfaces\RouterInterface
             $page = (object) $page;
 
             // Ignore anything that isn't a JSON page
-            if (false == is_array($page->type) || false == in_array("JSON", $page->type)) {
+            if (false == is_array($page->type) || false == in_array('JSON', $page->type)) {
                 continue;
             }
 

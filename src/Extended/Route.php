@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the "Extended Base Class Library for Symphony CMS" repository.
  *
- * Copyright 2020 Alannah Kearney <hi@alannahkearney.com>
+ * Copyright 2020-2021 Alannah Kearney <hi@alannahkearney.com>
  *
  * For the full copyright and license information, please view the LICENCE
  * file that was distributed with this source code.
@@ -16,16 +16,18 @@ namespace pointybeard\Symphony\Extended;
 use pointybeard\Helpers\Functions\Flags;
 use Symfony\Component\HttpFoundation;
 
-use Closure;
-
 class Route implements Interfaces\RouteInterface
 {
     protected const DEFAULT_VALIDATOR = '[^/]+';
 
     protected $url = null;
+
     protected $controller = null;
+
     protected $methods = null;
+
     protected $validate = [];
+
     protected $middleware = null;
 
     protected $page = null;
@@ -178,19 +180,20 @@ class Route implements Interfaces\RouteInterface
         return false == empty($this->middleware());
     }
 
-    protected static function normaliseMiddleware($middleware) {
+    protected static function normaliseMiddleware($middleware)
+    {
 
         // Array of middleware
-        if(true == is_array($middleware)) {
+        if (true == is_array($middleware)) {
             $result = [];
-            foreach($middleware as $m) {
+            foreach ($middleware as $m) {
                 $result = array_merge($result, self::normaliseMiddleware($m));
             }
+
             return $result;
         }
 
         return [$middleware];
-
     }
 
     public function runMiddleware(HttpFoundation\Request $request, HttpFoundation\Response $response)
@@ -200,10 +203,9 @@ class Route implements Interfaces\RouteInterface
             return $response;
         }
 
-        foreach(self::normaliseMiddleware($this->middleware()) as $middleware) {
+        foreach (self::normaliseMiddleware($this->middleware()) as $middleware) {
             ServiceContainer::getInstance()->get($middleware);
         }
-
     }
 
     public function toArray(): array
