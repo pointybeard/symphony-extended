@@ -47,7 +47,7 @@ class ServiceContainer implements Psr\Container\ContainerInterface
         return true == isset($this->services[$id]) || true == isset($this->instances[$id]) || true == isset($this->methods[$id]);
     }
 
-    private function registerMethod($id, $concrete)
+    private function registerMethod($id, $concrete, array $args = [])
     {
         $concrete = $concrete ?? $id;
 
@@ -59,10 +59,10 @@ class ServiceContainer implements Psr\Container\ContainerInterface
             $this->register($class);
         }
 
-        $this->methods[$id] = compact('concrete', 'class', 'method');
+        $this->methods[$id] = compact('concrete', 'class', 'method', 'args');
     }
 
-    public function register($id, $concrete = null, bool $shared = false): void
+    public function register($id, $concrete = null, bool $shared = false, array $args = []): void
     {
         $concrete = $concrete ?? $id;
 
@@ -75,12 +75,12 @@ class ServiceContainer implements Psr\Container\ContainerInterface
         }
 
         if (true == is_callable($concrete)) {
-            $this->registerMethod($id, $concrete);
+            $this->registerMethod($id, $concrete, $args);
 
             return;
         }
 
-        $this->services[$id] = compact('concrete', 'shared');
+        $this->services[$id] = compact('concrete', 'shared', 'args');
     }
 
     public function deregister($id)
@@ -99,24 +99,33 @@ class ServiceContainer implements Psr\Container\ContainerInterface
     {
         $instance = $this->resolveService($this->methods[$id]['class']);
 
-        $def = new ReflectionMethod($this->methods[$id]['concrete']);
+        try {
+            $def = new ReflectionMethod($this->methods[$id]['concrete']);
+        } catch(\ReflectionException $ex) {
+            throw new Exceptions\ServiceContainerException("Failed to resolve entry method. Returned: {$ex->getMessage()}.", $ex->getCode(), $ex);
+        }
 
         if (0 == $def->getNumberOfParameters()) {
             return $def->invoke($instance);
         }
 
-        return $def->invoke($instance, ...$this->buildMethodParameters($def));
+        return $def->invoke($instance, ...$this->buildMethodParameters($def, $this->methods[$id]['args']));
     }
 
     private function resolveService($id)
     {
-        $def = (new ReflectionClass($this->services[$id]['concrete']));
+        try {
+            $def = (new ReflectionClass($this->services[$id]['concrete']));
+        } catch(\ReflectionException $ex) {
+            throw new Exceptions\ServiceContainerException("Failed to resolve entry. Returned: {$ex->getMessage()}.", $ex->getCode(), $ex);
+        }
+
         $constructor = $def->getConstructor();
 
         if (true == (null === $constructor) || 0 == $constructor->getNumberOfParameters()) {
             $instance = $def->newInstance();
         } else {
-            $instance = $def->newInstance(...$this->buildMethodParameters($constructor));
+            $instance = $def->newInstance(...$this->buildMethodParameters($constructor, $this->services[$id]['args']));
         }
 
         if (true == $this->services[$id]['shared']) {
@@ -126,17 +135,24 @@ class ServiceContainer implements Psr\Container\ContainerInterface
         return $instance;
     }
 
-    private function buildMethodParameters($method)
+    private function buildMethodParameters($method, array $args = [])
     {
         if (true == ($method instanceof ReflectionMethod)) {
             foreach ($method->getParameters() as $p) {
                 try {
                     $params[] = $this->resolve($p->getName());
                 } catch (Exceptions\ServiceContainerEntryNotFoundException $ex) {
-                    // Nothing was located. See if this is an optional parameter, otherwise, throw an exception
+
+                    // Nothing was located. Have a look in $args
+                    if(true == isset($args[$p->getName()])) {
+                        $params[] = $args[$p->getName()];
+                        continue;
+                    }
+
+                    // See if this is an optional parameter, otherwise, throw an exception
                     if (false == $p->isOptional()) {
                         // A value is required. We'll have to throw an exception.
-                        throw new Exceptions\ServiceContainerException("Unable to instanciate {$id}. Required parameter {$p->getName()} could not be resolved.");
+                        throw new Exceptions\ServiceContainerException("Unable to instanciate {$method->getName()}. Required parameter {$p->getName()} could not be resolved.");
                     }
                     // Since this is optional, but there is no value set, we need to stop.
                     break;
