@@ -196,16 +196,18 @@ class Route implements Interfaces\RouteInterface
         return [$middleware];
     }
 
-    public function runMiddleware(HttpFoundation\Request $request, HttpFoundation\Response $response)
+    public function runMiddleware(): HttpFoundation\Response
     {
         // Guard
         if (false == $this->hasMiddleware()) {
-            return $response;
+            return ServiceContainer::getInstance()->get("response");
         }
 
         foreach (self::normaliseMiddleware($this->middleware()) as $middleware) {
             ServiceContainer::getInstance()->get($middleware);
         }
+
+        return ServiceContainer::getInstance()->get("response");
     }
 
     public function toArray(): array
