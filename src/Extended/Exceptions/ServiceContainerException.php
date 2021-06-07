@@ -12,7 +12,7 @@ declare(strict_types=1);
  */
 
 namespace pointybeard\Symphony\Extended\Exceptions;
-
+use Psr\Container\ContainerExceptionInterface;
 class ServiceContainerException extends SymphonyExtendedException implements ContainerExceptionInterface
 {
 }
