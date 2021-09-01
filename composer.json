@@ -19,7 +19,7 @@
         "php": ">=7.3",
         "psr/container": "^2.0",
         "pointybeard/helpers": "^1.2.0",
-        "symfony/http-foundation": "^4.0",
+        "symfony/http-foundation": "^5.0",
         "pointybeard/symphony-pdo": "^0.1.0",
         "pointybeard/symphony-section-builder": "~0.2.0",
         "pointybeard/symphony-extension-asset-management": "^0.1.0"
